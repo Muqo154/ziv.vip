@@ -13,8 +13,8 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m'
-REPO_URL="https://raw.githubusercontent.com/Pondok-Vpn"
-LICENSE_URL=https://raw.githubusercontent.com/Pondok-Vpn/udp-ziv/main/DAFTAR
+REPO_URL="https://raw.githubusercontent.com/Muqo154"
+LICENSE_URL=https://raw.githubusercontent.com/Muqo154/ziv.vip/main/DAFTAR
 MENU_SCRIPT=/usr/local/bin/zivpn-menu
 
 log() {
