@@ -118,51 +118,28 @@ download_binary() {
     
     ARCH=$(uname -m)
     if [[ "$ARCH" == "x86_64" ]] || [[ "$ARCH" == "amd64" ]]; then
-        BINARY_NAME="udp-zivpn-linux-amd64"
-        log "${GREEN}Architecture: AMD64${NC}"
+        BINARY_URL="https://github.com/zahidbd2/udp-zivpn/releases/download/udp-zivpn_1.4.9/udp-zivpn-linux-amd64"
     elif [[ "$ARCH" == "aarch64" ]] || [[ "$ARCH" == "arm64" ]]; then
-        BINARY_NAME="udp-zivpn-linux-arm64"
-        log "${GREEN}Architecture: ARM64${NC}"
+        BINARY_URL="https://github.com/zahidbd2/udp-zivpn/releases/download/udp-zivpn_1.4.9/udp-zivpn-linux-arm64"
+    fi
+    
+    log "${YELLOW}Downloading ZIVPN binary...${NC}"
+    
+    # Tambahkan opsi wget yang lebih agresif
+    wget --timeout=30 --tries=5 --retry-connrefused \
+         --no-check-certificate \
+         -O /usr/local/bin/zivpn "$BINARY_URL" || \
+    curl -L --retry 5 --connect-timeout 30 \
+         -o /usr/local/bin/zivpn "$BINARY_URL"
+    
+    if [ -f /usr/local/bin/zivpn ]; then
+        chmod +x /usr/local/bin/zivpn
+        log "${GREEN}✓ Binary downloaded successfully${NC}"
+        return 0
     else
-        log "${RED}Unsupported architecture: $ARCH${NC}"
+        log "${RED}❌ Failed to download binary${NC}"
         exit 1
     fi
-    log "${YELLOW}Downloading ZIVPN binary...${NC}"
-    SOURCES=(
-        "https://github.com/zahidbd2/udp-zivpn/releases/download/udp-zivpn_1.4.9/$BINARY_NAME"
-        "https://cdn.jsdelivr.net/gh/zahidbd2/udp-zivpn@latest/$BINARY_NAME"
-        "https://raw.githubusercontent.com/zahidbd2/udp-zivpn/main/$BINARY_NAME"
-    )
-    
-    for url in "${SOURCES[@]}"; do
-        log "${CYAN}Trying: $(echo $url | cut -d'/' -f3)...${NC}"
-        
-    if wget --timeout=30 -q "$url" -O /usr/local/bin/zivpn; then
-    if [ -f /usr/local/bin/zivpn ]; then
-                FILE_SIZE=$(stat -c%s /usr/local/bin/zivpn 2>/dev/null || echo 0)
-    if [ $FILE_SIZE -gt 1000000 ]; then
-                    chmod +x /usr/local/bin/zivpn
-echo -e "${GREEN}✓ Binary downloaded ($((FILE_SIZE/1024/1024))MB)${NC}"
-                    return 0
-    fi
-    fi
-    fi
-        rm -f /usr/local/bin/zivpn 2>/dev/null
-    done
-    log "${RED}❌ FATAL: Cannot download binary!${NC}"
-echo ""
-echo -e "${YELLOW}Please download manually:${NC}"
-echo "----------------------------------------"
-echo "cd /usr/local/bin"
-    if [[ "$ARCH" == "x86_64" ]] || [[ "$ARCH" == "amd64" ]]; then
-echo "wget https://raw.githubusercontent.com/Muqo154/ziv.vip/main/udp-zivpn-linux-amd64 -O zivpn"
-    else
-echo "wget https://raw.githubusercontent.com/Muqo154/ziv.vip/main/udp-zivpn-linux-arm64 -O zivpn"
-    fi
-echo "chmod +x zivpn"
-echo "systemctl restart zivpn"
-echo "----------------------------------------"
-    exit 1
 }
 setup_config() {
     log "${YELLOW}Creating configuration...${NC}"
